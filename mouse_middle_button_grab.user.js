@@ -78,7 +78,12 @@
     };
     designer_layout.onmousewheel = function(e){
         if(e.altKey === true){
-            console.log("zoom: " + e.deltaY);
+            //console.log("zoom: " + e.deltaY);
+            var oldScale = Designer.config.scale;
+            var oldScrollTop = designer_layout.scrollTop;
+            var oldScrollLeft = designer_layout.scrollLeft;
+            var oldScrollWidth = designer_layout.scrollWidth;
+            var oldScrollHeight = designer_layout.scrollHeight;
             if(e.deltaY > 0){
                 if(diaType == "mindmap"){
                     document.getElementById("btn_zoomsmall").click();
@@ -97,11 +102,63 @@
                     }
                 }
             }
+            var newScale = Designer.config.scale;
+
+            //console.log(e);
+            recalcScrollAfterScaleChanged(oldScrollTop,oldScrollLeft,oldScrollWidth,oldScrollHeight,oldScale,newScale,e.x,e.y);
             e.preventDefault();
             e.stopPropagation();
         }
 
     };
+
+    if(diaType == "diagram"){
+        designer_layout.ondblclick = function(e){
+            if(e.button==1){
+                var oldScale = Designer.config.scale;
+                var oldScrollTop = designer_layout.scrollTop;
+                var oldScrollLeft = designer_layout.scrollLeft;
+                var oldScrollWidth = designer_layout.scrollWidth;
+                var oldScrollHeight = designer_layout.scrollHeight;
+
+                console.log("clear set zoom scale to 1.");
+                Designer.setZoomScale(1);
+                recalcScrollAfterScaleChanged(oldScrollTop,oldScrollLeft,oldScrollWidth,oldScrollHeight,oldScale,1.0,e.x,e.y);
+
+            }
+        };
+    }
+    function recalcScrollAfterScaleChanged(oldScrollTop,oldScrollLeft,oldScrollWidth,oldScrollHeight,oldScale, newScale, centerX, centerY){
+        if(diaType != "diagram") return; //supports diagram only
+        console.log("top,left= " +designer_layout.scrollTop +" ,"+designer_layout.scrollLeft+" scale:"+ oldScale + ","+newScale);
+        var diaClientRect = designer_layout.getClientRects()[0];
+        var offsetTop = centerY - diaClientRect.top;
+        var offsetLeft = centerX - diaClientRect.left;
+        console.log("offset:"+offsetTop + ","+offsetLeft);
+
+        var centerPointScrollTopOrigFactor = (oldScrollTop + offsetTop)/oldScrollHeight;
+        var centerPointScrollLeftOrigFactor = (oldScrollLeft + offsetLeft)/oldScrollWidth;
+        var centerPointScrollTopNew = centerPointScrollTopOrigFactor * designer_layout.scrollHeight;
+        var centerPointScrollLeftNew = centerPointScrollLeftOrigFactor * designer_layout.scrollWidth;
+        designer_layout.scrollTop = centerPointScrollTopNew - offsetTop;
+        designer_layout.scrollLeft = centerPointScrollLeftNew - offsetLeft;
+
+/*
+        designer_layout.scrollTop = designer_layout.scrollHeight * (oldScrollTop + offsetTop)/oldScrollHeight  - offsetTop;
+        designer_layout.scrollLeft =designer_layout.scrollWidth * (oldScrollLeft + offsetLeft)/oldScrollWidth  - offsetLeft;
+*/
+    }
+    /*
+    function recalcScrollAfterScaleChanged(oldScale, newScale){
+        if(diaType != "diagram") return; //supports diagram only
+        var diaClientRect = designer_layout.getClientRects()[0];
+        var centerPointScrollTopOrig = (designer_layout.scrollTop + diaClientRect.height/2)/oldScale;
+        var centerPointScrollLeftOrig = (designer_layout.scrollLeft + diaClientRect.width/2)/oldScale;
+        var centerPointScrollTopNew = centerPointScrollTopOrig * newScale;
+        var centerPointScrollLeftNew = centerPointScrollLeftOrig * newScale;
+        designer_layout.scrollTop = centerPointScrollTopNew - diaClientRect.height/2/oldScale*newScale;
+        designer_layout.scrollLeft = centerPointScrollLeftNew - diaClientRect.width/2/oldScale*newScale;
+    }*/
     /*
     designer_layout.onclick = function(e){
         if(e.button == 1){
