@@ -2,7 +2,7 @@
 // @name         mouse_middle_button_grab
 // @namespace    
 // @version      0.3
-// @description  drap canvas when using processon
+// @description  drag canvas when using processon
 // @author       SimonTheCoder
 // @match        https://www.processon.com/*
 // @grant        none
@@ -78,7 +78,7 @@
 
     };
     designer_layout.onmousewheel = function(e){
-        if(e.altKey === true){
+        if(e.altKey === true && e.shiftKey === true){
             //console.log("zoom: " + e.deltaY);
             var oldScale = Designer.config.scale;
             var oldScrollTop = designer_layout.scrollTop;
