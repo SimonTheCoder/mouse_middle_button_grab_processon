@@ -60,7 +60,8 @@
         }
     };
     designer_layout.onmousemove = function(e){
-        if(e.button == 1 && middle_down === true){
+        //console.log("mouse move button=%d", e.button);
+        if(middle_down === true){
             //console.log("middle mouse move. x =" + e.x + " y=" +e.y + " lastx =" + lastX + " lasty=" +lastY );
             designer_layout.scrollTop = designer_layout.scrollTop - (e.y - lastY);
             designer_layout.scrollLeft = designer_layout.scrollLeft - (e.x - lastX);
@@ -166,4 +167,11 @@
         }
     };
     */
+})();
+
+
+(function() {
+    'use strict';
+
+    // Your code here...
 })();
